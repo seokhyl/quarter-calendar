@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { FOLDERS, CALENDARS, DEFAULT_ACTIVE_CALENDAR_ID, DEFAULT_VISIBLE_WEEK_IDS } from './constants/calendars.js'
+import {
+  FOLDERS,
+  CALENDARS,
+  DEFAULT_ACTIVE_CALENDAR_ID,
+  DEFAULT_VISIBLE_WEEK_IDS,
+  DEFAULT_WEEK_1_MONDAY,
+} from './constants/calendars.js'
 import QuarterCalendar from './components/QuarterCalendar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 
@@ -35,6 +41,7 @@ function App() {
       title: trimmedName,
       subtitle: '',
       visibleWeekIds: DEFAULT_VISIBLE_WEEK_IDS,
+      week1Monday: DEFAULT_WEEK_1_MONDAY,
     }
     setCalendars((currentCalendars) => [...currentCalendars, calendar])
   }
@@ -100,7 +107,9 @@ function App() {
           <QuarterCalendar
             activeCalendarId={activeCalendarId}
             visibleWeekIds={activeCalendar?.visibleWeekIds ?? DEFAULT_VISIBLE_WEEK_IDS}
+            week1Monday={activeCalendar?.week1Monday ?? DEFAULT_WEEK_1_MONDAY}
             onChangeVisibleWeekIds={(visibleWeekIds) => updateActiveCalendar({ visibleWeekIds })}
+            onChangeWeek1Monday={(week1Monday) => updateActiveCalendar({ week1Monday })}
           />
         </div>
       </div>

@@ -13,7 +13,7 @@ const EMPTY_EVENT = {
   note: '',
 }
 
-function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
+function WeekColumn({ week, dateRange, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
   const isFinals = week.id === 'finals'
   const [isAdding, setIsAdding] = useState(false)
   const [draftEvent, setDraftEvent] = useState(EMPTY_EVENT)
@@ -45,7 +45,10 @@ function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent, on
   return (
     <article className={`week-column${isFinals ? ' week-column--finals' : ''}`}>
       <div className="week-column__header">
-        <h2>{week.label}</h2>
+        <div className="week-column__title">
+          <h2>{week.label}</h2>
+          {dateRange ? <p>{dateRange}</p> : null}
+        </div>
         <div className="week-column__actions">
           <button
             className="paste-event-button"

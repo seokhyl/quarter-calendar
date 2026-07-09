@@ -27,7 +27,8 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - App shell uses full viewport height with a left sidebar and a main content region.
 - Sidebar lists folders and their calendars, plus an Unfiled group for calendars without a folder. It includes New folder and New calendar buttons.
 - Selecting a calendar sets `activeCalendarId`; the main quarterly calendar shows only events for that calendar.
-- Calendar title, subtitle, and week visibility are stored on each calendar object and restored when switching active calendars.
+- Calendar title, subtitle, week visibility, and Week 1 Monday are stored on each calendar object and restored when switching active calendars.
+- The calendar meta row includes a compact Week 1 Monday month/day picker; the active calendar's selected browser-session state drives computed weekly date ranges.
 - App main contains the editable header and the scrollable calendar stage.
 - Calendar track is a horizontal flex row with 12 fixed-width week columns.
 - Columns never shrink below their minimum width; narrow viewports navigate via horizontal scroll.
@@ -39,11 +40,12 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Sidebar: folders, calendars (with optional folderId), unfiled calendars, active calendar selection, and create buttons.
 - Week visibility: header button opens a modal popup listing all weeks with checkboxes and a visible-count summary.
 - Week column: title row, add button, inline add form, and stacked event cards.
+- Week date range: optional Monday-Sunday date text appears directly below each week title once Week 1 Monday is selected.
 - Event card: small block with day label and HH:MM - HH:MM time range on the right, title, optional note, copy/edit controls, and delete control.
 - Event clipboard: Copy stores event contents in memory; Paste in a week column creates a new event for the active calendar with a fresh id.
 - Finals column: same structure as a week column with warmer tint and stronger border.
 - Events sort by day of week within a week (미선택 first, then MON through SUN).
-- Each event carries `calendarId`; each calendar may carry an optional `folderId`, `title`, `subtitle`, and `visibleWeekIds`.
+- Each event carries `calendarId`; each calendar may carry an optional `folderId`, `title`, `subtitle`, `visibleWeekIds`, and `week1Monday`.
 
 ## 6. States
 
@@ -51,6 +53,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Event cards can switch between read and edit states.
 - Delete removes an event from browser state only.
 - Week visibility checkboxes hide or show week columns without removing their events.
+- Week 1 Monday month/day selection is stored per calendar and computes visible date ranges in browser state only.
 
 ## 7. Constraints
 

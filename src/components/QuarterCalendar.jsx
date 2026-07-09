@@ -4,6 +4,23 @@ import { DAY_ORDER } from '../constants/days.js'
 import WeekColumn from './WeekColumn.jsx'
 import WeekVisibilityPanel from './WeekVisibilityPanel.jsx'
 
+const MONTH_OPTIONS = [
+  { value: '1', label: 'Jan', days: 31 },
+  { value: '2', label: 'Feb', days: 28 },
+  { value: '3', label: 'Mar', days: 31 },
+  { value: '4', label: 'Apr', days: 30 },
+  { value: '5', label: 'May', days: 31 },
+  { value: '6', label: 'Jun', days: 30 },
+  { value: '7', label: 'Jul', days: 31 },
+  { value: '8', label: 'Aug', days: 31 },
+  { value: '9', label: 'Sep', days: 30 },
+  { value: '10', label: 'Oct', days: 31 },
+  { value: '11', label: 'Nov', days: 30 },
+  { value: '12', label: 'Dec', days: 31 },
+]
+
+const DATE_RANGE_YEAR = 2026
+
 const INITIAL_EVENTS = {
   'week-0': [{ id: 'event-0', calendarId: 'cal-1', day: 'FRI', startHour: '09', startMinute: '00', endHour: '10', endMinute: '30', title: 'Quarter setup', note: 'Map deadlines and goals.' }],
   'week-1': [
@@ -28,11 +45,60 @@ const INITIAL_EVENTS = {
   ],
 }
 
-function QuarterCalendar({ activeCalendarId, visibleWeekIds, onChangeVisibleWeekIds }) {
+function QuarterCalendar({
+  activeCalendarId,
+  visibleWeekIds,
+  week1Monday,
+  onChangeVisibleWeekIds,
+  onChangeWeek1Monday,
+}) {
   const [eventsByWeek, setEventsByWeek] = useState(INITIAL_EVENTS)
   const [nextEventId, setNextEventId] = useState(15)
   const [isVisibilityOpen, setVisibilityOpen] = useState(false)
   const [eventClipboard, setEventClipboard] = useState(null)
+
+  const selectedMonth = MONTH_OPTIONS.find((month) => month.value === week1Monday.month)
+  const dayOptions = selectedMonth
+    ? Array.from({ length: selectedMonth.days }, (_, dayIndex) => String(dayIndex + 1))
+    : []
+
+  function handleWeek1MonthChange(month) {
+    const nextMonth = MONTH_OPTIONS.find((monthOption) => monthOption.value === month)
+    const currentDay = Number(week1Monday.day)
+    const nextDay = nextMonth ? String(Math.min(currentDay || 1, nextMonth.days)) : ''
+
+    onChangeWeek1Monday({ month, day: nextDay })
+  }
+
+  function getWeekOffset(weekId) {
+    if (weekId === 'week-0') {
+      return -7
+    }
+
+    if (weekId === 'finals') {
+      return 70
+    }
+
+    return (Number(weekId.replace('week-', '')) - 1) * 7
+  }
+
+  function formatDate(date) {
+    return `${date.getMonth() + 1}/${date.getDate()}`
+  }
+
+  function getWeekDateRange(weekId) {
+    if (!week1Monday.month || !week1Monday.day) {
+      return ''
+    }
+
+    const startDate = new Date(DATE_RANGE_YEAR, Number(week1Monday.month) - 1, Number(week1Monday.day))
+    startDate.setDate(startDate.getDate() + getWeekOffset(weekId))
+
+    const endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + 6)
+
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`
+  }
 
   function handleAddEvent(weekId, eventInput) {
     const event = { ...eventInput, id: `event-${nextEventId}`, calendarId: activeCalendarId }
@@ -98,11 +164,37 @@ function QuarterCalendar({ activeCalendarId, visibleWeekIds, onChangeVisibleWeek
   return (
     <section className="calendar-section" aria-label="Quarter calendar">
       <div className="calendar-meta">
-        <span>12 week overview</span>
+        <div className="week-date-picker" aria-label="Set Week 1 Monday date">
+          <span>Week 1 Monday</span>
+          <select
+            aria-label="Week 1 Monday month"
+            value={week1Monday.month}
+            onChange={(event) => handleWeek1MonthChange(event.target.value)}
+          >
+            <option value="">Month</option>
+            {MONTH_OPTIONS.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+          <select
+            aria-label="Week 1 Monday day"
+            disabled={!selectedMonth}
+            value={week1Monday.day}
+            onChange={(event) => onChangeWeek1Monday({ ...week1Monday, day: event.target.value })}
+          >
+            <option value="">Day</option>
+            {dayOptions.map((day) => (
+              <option key={day} value={day}>
+                {day}
+              </option>
+            ))}
+          </select>
+        </div>
         <span>Scroll horizontally to explore the quarter</span>
         <button className="visibility-button" type="button" onClick={() => setVisibilityOpen(true)}>
           Week Visibility
-          <span className="count-badge">{visibleWeekIds.length}/{WEEKS.length}</span>
         </button>
       </div>
 
@@ -112,6 +204,7 @@ function QuarterCalendar({ activeCalendarId, visibleWeekIds, onChangeVisibleWeek
             <WeekColumn
               key={week.id}
               week={week}
+              dateRange={getWeekDateRange(week.id)}
               events={getSortedEvents(week.id)}
               onAddEvent={handleAddEvent}
               onUpdateEvent={handleUpdateEvent}

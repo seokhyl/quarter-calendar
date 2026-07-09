@@ -42,7 +42,8 @@ button {
 }
 
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -397,6 +398,37 @@ h1 {
   margin-bottom: 12px;
 }
 
+.week-date-picker {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.week-date-picker select {
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 7px 28px 7px 12px;
+  text-transform: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.week-date-picker select:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.week-date-picker select:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.16);
+  outline: none;
+}
+
 .calendar-scroll {
   overflow-x: auto;
   padding: 4px 4px 20px;
@@ -435,6 +467,11 @@ h1 {
   margin-bottom: 18px;
 }
 
+.week-column__title {
+  display: grid;
+  gap: 4px;
+}
+
 .week-column__actions {
   align-items: center;
   display: flex;
@@ -444,6 +481,14 @@ h1 {
 .week-column h2 {
   font-size: 1rem;
   letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.week-column__title p {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   margin: 0;
 }
 
