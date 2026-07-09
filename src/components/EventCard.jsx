@@ -13,7 +13,7 @@ function formatRange(event) {
   return ''
 }
 
-function EventCard({ event, onUpdate, onDelete }) {
+function EventCard({ event, onUpdate, onDelete, onCopy }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draftEvent, setDraftEvent] = useState(event)
 
@@ -86,6 +86,9 @@ function EventCard({ event, onUpdate, onDelete }) {
       <h3>{event.title}</h3>
       <p className="event-card__note">{event.note}</p>
       <div className="event-card__actions">
+        <button className="text-button" type="button" onClick={onCopy}>
+          Copy
+        </button>
         <button className="text-button" type="button" onClick={() => setIsEditing(true)}>
           Edit
         </button>

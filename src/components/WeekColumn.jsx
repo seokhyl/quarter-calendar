@@ -13,7 +13,7 @@ const EMPTY_EVENT = {
   note: '',
 }
 
-function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent }) {
+function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
   const isFinals = week.id === 'finals'
   const [isAdding, setIsAdding] = useState(false)
   const [draftEvent, setDraftEvent] = useState(EMPTY_EVENT)
@@ -46,14 +46,24 @@ function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent }) 
     <article className={`week-column${isFinals ? ' week-column--finals' : ''}`}>
       <div className="week-column__header">
         <h2>{week.label}</h2>
-        <button
-          className="add-event-button"
-          type="button"
-          aria-label={`Add event to ${week.label}`}
-          onClick={() => setIsAdding((currentValue) => !currentValue)}
-        >
-          +
-        </button>
+        <div className="week-column__actions">
+          <button
+            className="paste-event-button"
+            type="button"
+            disabled={!canPasteEvent}
+            onClick={() => onPasteEvent(week.id)}
+          >
+            Paste
+          </button>
+          <button
+            className="add-event-button"
+            type="button"
+            aria-label={`Add event to ${week.label}`}
+            onClick={() => setIsAdding((currentValue) => !currentValue)}
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {isAdding ? (
@@ -107,6 +117,7 @@ function WeekColumn({ week, events, onAddEvent, onUpdateEvent, onDeleteEvent }) 
             event={event}
             onUpdate={(updatedEvent) => onUpdateEvent(week.id, updatedEvent)}
             onDelete={() => onDeleteEvent(week.id, event.id)}
+            onCopy={() => onCopyEvent(event)}
           />
         ))}
       </div>

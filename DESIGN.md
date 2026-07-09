@@ -24,7 +24,11 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 
 ## 4. Layout
 
-- App shell uses full viewport height with a fixed header region and a scrollable calendar stage.
+- App shell uses full viewport height with a left sidebar and a main content region.
+- Sidebar lists folders and their calendars, plus an Unfiled group for calendars without a folder. It includes New folder and New calendar buttons.
+- Selecting a calendar sets `activeCalendarId`; the main quarterly calendar shows only events for that calendar.
+- Calendar title, subtitle, and week visibility are stored on each calendar object and restored when switching active calendars.
+- App main contains the editable header and the scrollable calendar stage.
 - Calendar track is a horizontal flex row with 12 fixed-width week columns.
 - Columns never shrink below their minimum width; narrow viewports navigate via horizontal scroll.
 - Week visibility is opened from a header button and shown in a modal popup, not as a permanent column.
@@ -32,11 +36,14 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 ## 5. Components
 
 - App header: editable title and subtitle fields with short supporting copy.
+- Sidebar: folders, calendars (with optional folderId), unfiled calendars, active calendar selection, and create buttons.
 - Week visibility: header button opens a modal popup listing all weeks with checkboxes and a visible-count summary.
 - Week column: title row, add button, inline add form, and stacked event cards.
-- Event card: small block with day label and HH:MM - HH:MM time range on the right, title, optional note, edit controls, and delete control.
+- Event card: small block with day label and HH:MM - HH:MM time range on the right, title, optional note, copy/edit controls, and delete control.
+- Event clipboard: Copy stores event contents in memory; Paste in a week column creates a new event for the active calendar with a fresh id.
 - Finals column: same structure as a week column with warmer tint and stronger border.
 - Events sort by day of week within a week (미선택 first, then MON through SUN).
+- Each event carries `calendarId`; each calendar may carry an optional `folderId`, `title`, `subtitle`, and `visibleWeekIds`.
 
 ## 6. States
 
