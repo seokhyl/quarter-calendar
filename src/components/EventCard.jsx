@@ -45,6 +45,14 @@ function EventCard({ event, onUpdate, onDelete, onCopy }) {
     return (
       <form className="event-card event-card--editing" onSubmit={handleSubmit}>
         <label>
+          Title
+          <input required value={draftEvent.title} onChange={(event) => handleDraftChange('title', event.target.value)} />
+        </label>
+        <label>
+          Note
+          <textarea rows="3" value={draftEvent.note} onChange={(event) => handleDraftChange('note', event.target.value)} />
+        </label>
+        <label>
           Day
           <select value={draftEvent.day} onChange={(event) => handleDraftChange('day', event.target.value)}>
             {DAY_OPTIONS.map((option) => (
@@ -56,15 +64,6 @@ function EventCard({ event, onUpdate, onDelete, onCopy }) {
         </label>
 
         <EventTimeFields value={draftEvent} onChange={handleDraftChange} />
-
-        <label>
-          Title
-          <input required value={draftEvent.title} onChange={(event) => handleDraftChange('title', event.target.value)} />
-        </label>
-        <label>
-          Note
-          <textarea rows="3" value={draftEvent.note} onChange={(event) => handleDraftChange('note', event.target.value)} />
-        </label>
         <div className="form-actions">
           <button className="text-button" type="button" onClick={handleCancel}>
             Cancel

@@ -160,6 +160,7 @@ select {
   align-items: center;
   display: flex;
   gap: 8px;
+  position: relative;
 }
 
 .sidebar-folder-button {
@@ -230,11 +231,11 @@ select {
   border-color: var(--color-accent-strong);
 }
 
-.delete-button {
+.sidebar-more-button {
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
-  color: var(--color-danger);
+  color: var(--color-muted);
   cursor: pointer;
   flex: 0 0 auto;
   font-size: 0.86rem;
@@ -246,10 +247,92 @@ select {
   width: 24px;
 }
 
-.delete-button:hover,
-.delete-button:focus-visible {
+.sidebar-more-button:hover,
+.sidebar-more-button:focus-visible {
+  background: var(--color-surface-strong);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.sidebar-menu {
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  display: grid;
+  gap: 6px;
+  min-width: 190px;
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 5;
+}
+
+.sidebar-menu__item {
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 800;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.sidebar-menu__item:hover,
+.sidebar-menu__item:focus-visible {
+  background: var(--color-surface);
+}
+
+.sidebar-menu__item--danger {
+  color: var(--color-danger);
+}
+
+.sidebar-menu__item--danger:hover,
+.sidebar-menu__item--danger:focus-visible {
   background: var(--color-danger-soft);
-  border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+}
+
+.sidebar-menu__edit,
+.sidebar-menu__field {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-menu__field {
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 4px 2px;
+  text-transform: uppercase;
+}
+
+.sidebar-menu input,
+.sidebar-menu select {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-text);
+  font: inherit;
+  padding: 8px 10px;
+  text-transform: none;
+  width: 100%;
+}
+
+.sidebar-menu input:focus,
+.sidebar-menu select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.16);
+  outline: none;
+}
+
+.sidebar-menu__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .app-header {
@@ -742,6 +825,11 @@ h1 {
 .primary-button {
   background: var(--color-accent);
   color: var(--color-surface-strong);
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
 }
 
 .text-button {

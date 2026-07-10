@@ -72,19 +72,6 @@ function WeekColumn({ week, dateRange, events, onAddEvent, onUpdateEvent, onDele
       {isAdding ? (
         <form className="event-form" onSubmit={handleSubmit}>
           <label>
-            Day
-            <select value={draftEvent.day} onChange={(event) => handleDraftChange('day', event.target.value)}>
-              {DAY_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <EventTimeFields value={draftEvent} onChange={handleDraftChange} />
-
-          <label>
             Title
             <input
               required
@@ -102,6 +89,18 @@ function WeekColumn({ week, dateRange, events, onAddEvent, onUpdateEvent, onDele
               placeholder="Optional details"
             />
           </label>
+          <label>
+            Day
+            <select value={draftEvent.day} onChange={(event) => handleDraftChange('day', event.target.value)}>
+              {DAY_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <EventTimeFields value={draftEvent} onChange={handleDraftChange} />
           <div className="form-actions">
             <button className="text-button" type="button" onClick={() => setIsAdding(false)}>
               Cancel

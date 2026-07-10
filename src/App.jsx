@@ -6,6 +6,13 @@ import {
   DEFAULT_VISIBLE_WEEK_IDS,
   DEFAULT_WEEK_1_MONDAY,
 } from './constants/calendars.js'
+import {
+  renameFolder as renameFolderOp,
+  renameCalendar as renameCalendarOp,
+  moveCalendar as moveCalendarOp,
+  deleteFolder as deleteFolderOp,
+  deleteCalendar as deleteCalendarOp,
+} from './lib/calendarState.js'
 import QuarterCalendar from './components/QuarterCalendar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 
@@ -46,25 +53,31 @@ function App() {
     setCalendars((currentCalendars) => [...currentCalendars, calendar])
   }
 
+  function handleRenameFolder(folderId, name) {
+    setFolders((currentFolders) => renameFolderOp(currentFolders, folderId, name))
+  }
+
+  function handleRenameCalendar(calendarId, name) {
+    setCalendars((currentCalendars) => renameCalendarOp(currentCalendars, calendarId, name))
+  }
+
+  function handleMoveCalendar(calendarId, folderId) {
+    setCalendars((currentCalendars) => moveCalendarOp(currentCalendars, calendarId, folderId))
+  }
+
   function handleDeleteFolder(folderId) {
-    setFolders((currentFolders) => currentFolders.filter((folder) => folder.id !== folderId))
-    setCalendars((currentCalendars) =>
-      currentCalendars.map((calendar) =>
-        calendar.folderId === folderId ? { ...calendar, folderId: undefined } : calendar,
-      ),
-    )
+    const result = deleteFolderOp(folders, calendars, folderId)
+    setFolders(result.folders)
+    setCalendars(result.calendars)
   }
 
   function handleDeleteCalendar(calendarId) {
-    setCalendars((currentCalendars) => {
-      const nextCalendars = currentCalendars.filter((calendar) => calendar.id !== calendarId)
+    const result = deleteCalendarOp(calendars, calendarId, activeCalendarId)
+    setCalendars(result.calendars)
 
-      if (activeCalendarId === calendarId) {
-        setActiveCalendarId(nextCalendars[0]?.id ?? '')
-      }
-
-      return nextCalendars
-    })
+    if (result.nextActiveId !== activeCalendarId) {
+      setActiveCalendarId(result.nextActiveId)
+    }
   }
 
   return (
@@ -77,6 +90,9 @@ function App() {
           onSelectCalendar={setActiveCalendarId}
           onCreateFolder={handleCreateFolder}
           onCreateCalendar={handleCreateCalendar}
+          onRenameFolder={handleRenameFolder}
+          onRenameCalendar={handleRenameCalendar}
+          onMoveCalendar={handleMoveCalendar}
           onDeleteFolder={handleDeleteFolder}
           onDeleteCalendar={handleDeleteCalendar}
         />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { WEEKS } from '../constants/weeks.js'
 import { DAY_ORDER } from '../constants/days.js'
+import { getWeekDateRange } from '../lib/calendarDates.js'
 import WeekColumn from './WeekColumn.jsx'
 import WeekVisibilityPanel from './WeekVisibilityPanel.jsx'
 
@@ -18,8 +19,6 @@ const MONTH_OPTIONS = [
   { value: '11', label: 'Nov', days: 30 },
   { value: '12', label: 'Dec', days: 31 },
 ]
-
-const DATE_RANGE_YEAR = 2026
 
 const INITIAL_EVENTS = {
   'week-0': [{ id: 'event-0', calendarId: 'cal-1', day: 'FRI', startHour: '09', startMinute: '00', endHour: '10', endMinute: '30', title: 'Quarter setup', note: 'Map deadlines and goals.' }],
@@ -68,36 +67,6 @@ function QuarterCalendar({
     const nextDay = nextMonth ? String(Math.min(currentDay || 1, nextMonth.days)) : ''
 
     onChangeWeek1Monday({ month, day: nextDay })
-  }
-
-  function getWeekOffset(weekId) {
-    if (weekId === 'week-0') {
-      return -7
-    }
-
-    if (weekId === 'finals') {
-      return 70
-    }
-
-    return (Number(weekId.replace('week-', '')) - 1) * 7
-  }
-
-  function formatDate(date) {
-    return `${date.getMonth() + 1}/${date.getDate()}`
-  }
-
-  function getWeekDateRange(weekId) {
-    if (!week1Monday.month || !week1Monday.day) {
-      return ''
-    }
-
-    const startDate = new Date(DATE_RANGE_YEAR, Number(week1Monday.month) - 1, Number(week1Monday.day))
-    startDate.setDate(startDate.getDate() + getWeekOffset(weekId))
-
-    const endDate = new Date(startDate)
-    endDate.setDate(startDate.getDate() + 6)
-
-    return `${formatDate(startDate)} - ${formatDate(endDate)}`
   }
 
   function handleAddEvent(weekId, eventInput) {
@@ -204,7 +173,7 @@ function QuarterCalendar({
             <WeekColumn
               key={week.id}
               week={week}
-              dateRange={getWeekDateRange(week.id)}
+              dateRange={getWeekDateRange(week.id, week1Monday)}
               events={getSortedEvents(week.id)}
               onAddEvent={handleAddEvent}
               onUpdateEvent={handleUpdateEvent}

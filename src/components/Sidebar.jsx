@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import SidebarActionMenu from './SidebarActionMenu.jsx'
 
 function Sidebar({
   folders,
@@ -7,6 +8,9 @@ function Sidebar({
   onSelectCalendar,
   onCreateFolder,
   onCreateCalendar,
+  onRenameFolder,
+  onRenameCalendar,
+  onMoveCalendar,
   onDeleteFolder,
   onDeleteCalendar,
 }) {
@@ -16,6 +20,24 @@ function Sidebar({
   const [calendarName, setCalendarName] = useState('')
   const [calendarFolderId, setCalendarFolderId] = useState('')
   const [collapsedFolderIds, setCollapsedFolderIds] = useState([])
+  const [openMenu, setOpenMenu] = useState(null)
+
+  useEffect(() => {
+    if (!openMenu) {
+      return undefined
+    }
+
+    function handlePointerDown(event) {
+      if (event.target.closest('.sidebar-menu') || event.target.closest('.sidebar-more-button')) {
+        return
+      }
+
+      closeMenu()
+    }
+
+    window.addEventListener('pointerdown', handlePointerDown)
+    return () => window.removeEventListener('pointerdown', handlePointerDown)
+  }, [openMenu])
 
   const calendarsByFolder = folders.map((folder) => ({
     folder,
@@ -42,6 +64,58 @@ function Sidebar({
       currentIds.includes(folderId)
         ? currentIds.filter((currentId) => currentId !== folderId)
         : [...currentIds, folderId],
+    )
+  }
+
+  function toggleMenu(itemType, itemId) {
+    setOpenMenu((currentMenu) =>
+      currentMenu?.type === itemType && currentMenu.id === itemId ? null : { type: itemType, id: itemId },
+    )
+  }
+
+  function closeMenu() {
+    setOpenMenu(null)
+  }
+
+  function renderFolderMenu(folder) {
+    if (openMenu?.type !== 'folder' || openMenu.id !== folder.id) {
+      return null
+    }
+
+    return (
+      <SidebarActionMenu
+        itemType="Folder"
+        itemName={folder.name}
+        folders={folders}
+        onRename={(name) => onRenameFolder(folder.id, name)}
+        onDelete={() => {
+          onDeleteFolder(folder.id)
+          closeMenu()
+        }}
+        onClose={closeMenu}
+      />
+    )
+  }
+
+  function renderCalendarMenu(calendar) {
+    if (openMenu?.type !== 'calendar' || openMenu.id !== calendar.id) {
+      return null
+    }
+
+    return (
+      <SidebarActionMenu
+        itemType="Calendar"
+        itemName={calendar.name}
+        folders={folders}
+        folderId={calendar.folderId}
+        onRename={(name) => onRenameCalendar(calendar.id, name)}
+        onMove={(folderId) => onMoveCalendar(calendar.id, folderId)}
+        onDelete={() => {
+          onDeleteCalendar(calendar.id)
+          closeMenu()
+        }}
+        onClose={closeMenu}
+      />
     )
   }
 
@@ -123,13 +197,15 @@ function Sidebar({
                 {folder.name} <span>{items.length}</span>
               </button>
               <button
-                className="delete-button"
+                className="sidebar-more-button"
                 type="button"
-                aria-label={`Delete folder ${folder.name}`}
-                onClick={() => onDeleteFolder(folder.id)}
+                aria-label={`Open folder actions for ${folder.name}`}
+                aria-expanded={openMenu?.type === 'folder' && openMenu.id === folder.id}
+                onClick={() => toggleMenu('folder', folder.id)}
               >
-                x
+                ...
               </button>
+              {renderFolderMenu(folder)}
             </div>
 
             {!isCollapsed ? (
@@ -144,13 +220,15 @@ function Sidebar({
                       {calendar.name}
                     </button>
                     <button
-                      className="delete-button"
+                      className="sidebar-more-button"
                       type="button"
-                      aria-label={`Delete calendar ${calendar.name}`}
-                      onClick={() => onDeleteCalendar(calendar.id)}
+                      aria-label={`Open calendar actions for ${calendar.name}`}
+                      aria-expanded={openMenu?.type === 'calendar' && openMenu.id === calendar.id}
+                      onClick={() => toggleMenu('calendar', calendar.id)}
                     >
-                      x
+                      ...
                     </button>
+                    {renderCalendarMenu(calendar)}
                   </li>
                 ))}
               </ul>
@@ -172,13 +250,15 @@ function Sidebar({
                     {calendar.name}
                   </button>
                   <button
-                    className="delete-button"
+                    className="sidebar-more-button"
                     type="button"
-                    aria-label={`Delete calendar ${calendar.name}`}
-                    onClick={() => onDeleteCalendar(calendar.id)}
+                    aria-label={`Open calendar actions for ${calendar.name}`}
+                    aria-expanded={openMenu?.type === 'calendar' && openMenu.id === calendar.id}
+                    onClick={() => toggleMenu('calendar', calendar.id)}
                   >
-                    x
+                    ...
                   </button>
+                  {renderCalendarMenu(calendar)}
                 </li>
               ))}
             </ul>
