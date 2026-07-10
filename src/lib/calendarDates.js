@@ -1,5 +1,15 @@
 const DATE_RANGE_YEAR = 2026
 
+const DAY_OFFSETS = {
+  MON: 0,
+  TUE: 1,
+  WED: 2,
+  THU: 3,
+  FRI: 4,
+  SAT: 5,
+  SUN: 6,
+}
+
 export function getWeekOffset(weekId) {
   if (weekId === 'week-0') {
     return -7
@@ -14,6 +24,21 @@ export function getWeekOffset(weekId) {
 
 export function formatDate(date) {
   return `${date.getMonth() + 1}/${date.getDate()}`
+}
+
+export function formatEventDate(date) {
+  return formatDate(date)
+}
+
+export function getEventDate(weekId, week1Monday, day, year = DATE_RANGE_YEAR) {
+  if (!week1Monday || !week1Monday.month || !week1Monday.day || !(day in DAY_OFFSETS)) {
+    return ''
+  }
+
+  const eventDate = new Date(year, Number(week1Monday.month) - 1, Number(week1Monday.day))
+  eventDate.setDate(eventDate.getDate() + getWeekOffset(weekId) + DAY_OFFSETS[day])
+
+  return formatEventDate(eventDate)
 }
 
 export function getWeekDateRange(weekId, week1Monday, year = DATE_RANGE_YEAR) {

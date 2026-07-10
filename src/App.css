@@ -460,13 +460,9 @@ h1 {
   margin: 8px 0 0;
 }
 
-.header-copy {
-  color: var(--color-muted);
-  font-size: 1rem;
-  line-height: 1.6;
-  margin: 0;
+.header-spacer {
   flex: 1 1 100%;
-  max-width: 640px;
+  height: calc(1rem * 1.6 / 3);
 }
 
 .calendar-section {

@@ -140,9 +140,7 @@ function App() {
                 onChange={(event) => updateActiveCalendar({ subtitle: event.target.value })}
               />
             </div>
-            <p className="header-copy">
-              Plan from Week 0 through Finals Week, add and revise events, and choose which weeks stay visible.
-            </p>
+            <div className="header-spacer" aria-hidden="true" />
           </header>
 
           <QuarterCalendar

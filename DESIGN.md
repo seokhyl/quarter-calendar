@@ -36,16 +36,16 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 
 ## 5. Components
 
-- App header: editable title and subtitle fields with short supporting copy.
+- App header: editable title and subtitle fields with a compact spacer below the heading area instead of helper copy.
 - Sidebar: folders, calendars (with optional folderId), unfiled calendars, active calendar selection, create buttons, and overflow menus for rename, move, and delete actions.
 - Week visibility: header button opens a modal popup listing all weeks with checkboxes and a visible-count summary.
 - Week column: title row, add button, inline add form ordered Title, Note, Day, Start, End, and stacked event cards.
 - Week date range: optional Monday-Sunday date text appears directly below each week title once Week 1 Monday is selected.
-- Event card: small block with day label and HH:MM - HH:MM time range on the right, title, optional note, copy/edit controls, delete control, and an edit form matching the add form order.
+- Event card: small block with metadata ordered date, Korean day label, and HH:MM - HH:MM time range, title, optional note, copy/edit controls, delete control, and an edit form matching the add form order.
 - Event clipboard: Copy stores event contents in memory; Paste in a week column creates a new event for the active calendar with a fresh id.
 - Persistence boundary: durable app state is saved and restored through `calendarPersistence`, keeping localStorage out of UI components so a later database-backed repository can replace it.
 - Finals column: same structure as a week column with warmer tint and stronger border.
-- Events sort by day of week within a week (미선택 first, then MON through SUN).
+- Events sort by day of week within a week (미선택 first, then 월 through 일).
 - Each event carries `calendarId`; each calendar may carry an optional `folderId`, `title`, `subtitle`, `visibleWeekIds`, and `week1Monday`.
 
 ## 6. States
@@ -56,6 +56,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Sidebar overflow menus rename folders/calendars, move calendars between folders, or delete items in browser-local state.
 - Week visibility checkboxes hide or show week columns without removing their events.
 - Week 1 Monday month/day selection is stored per calendar and computes visible date ranges in browser-local state.
+- Event card dates appear in M/D format when Week 1 Monday and an event day are selected.
 - Durable state changes auto-save to localStorage and restore on the next page load in the same browser.
 
 ## 7. Constraints

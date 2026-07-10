@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DAY_OPTIONS } from '../constants/days.js'
+import { getEventDate } from '../lib/calendarDates.js'
 import EventCard from './EventCard.jsx'
 import EventTimeFields from './EventTimeFields.jsx'
 
@@ -13,7 +14,7 @@ const EMPTY_EVENT = {
   note: '',
 }
 
-function WeekColumn({ week, dateRange, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
+function WeekColumn({ week, dateRange, week1Monday, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
   const isFinals = week.id === 'finals'
   const [isAdding, setIsAdding] = useState(false)
   const [draftEvent, setDraftEvent] = useState(EMPTY_EVENT)
@@ -117,6 +118,7 @@ function WeekColumn({ week, dateRange, events, onAddEvent, onUpdateEvent, onDele
           <EventCard
             key={event.id}
             event={event}
+            eventDate={getEventDate(week.id, week1Monday, event.day)}
             onUpdate={(updatedEvent) => onUpdateEvent(week.id, updatedEvent)}
             onDelete={() => onDeleteEvent(week.id, event.id)}
             onCopy={() => onCopyEvent(event)}

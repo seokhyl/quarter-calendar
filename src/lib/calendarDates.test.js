@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { WEEKS } from '../constants/weeks.js'
-import { getAllWeekDateRanges, getWeekDateRange, getWeekOffset } from './calendarDates.js'
+import { getAllWeekDateRanges, getEventDate, getWeekDateRange, getWeekOffset } from './calendarDates.js'
 
 describe('calendar date ranges', () => {
   it('computes week offsets from the selected Week 1 Monday', () => {
@@ -32,5 +32,19 @@ describe('calendar date ranges', () => {
     expect(ranges).toHaveLength(12)
     expect(ranges[0]).toEqual({ id: 'week-0', label: 'Week 0', range: '3/30 - 4/5' })
     expect(ranges[11]).toEqual({ id: 'finals', label: 'Finals Week', range: '6/15 - 6/21' })
+  })
+
+  it('formats event dates from Week 1 Monday, week, and day', () => {
+    const week1Monday = { month: '3', day: '2' }
+
+    expect(getEventDate('week-1', week1Monday, 'MON')).toBe('3/2')
+    expect(getEventDate('week-2', week1Monday, 'TUE')).toBe('3/10')
+    expect(getEventDate('finals', week1Monday, 'FRI')).toBe('5/15')
+  })
+
+  it('returns an empty event date until Week 1 Monday and day are selected', () => {
+    expect(getEventDate('week-1', { month: '', day: '' }, 'MON')).toBe('')
+    expect(getEventDate('week-1', { month: '3', day: '' }, 'MON')).toBe('')
+    expect(getEventDate('week-1', { month: '3', day: '2' }, '')).toBe('')
   })
 })

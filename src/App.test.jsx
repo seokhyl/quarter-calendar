@@ -23,7 +23,7 @@ describe('App feature flows', () => {
     openFolderMenu('School')
     expect(screen.getByRole('menu', { name: 'School actions' })).toBeInTheDocument()
 
-    await user.click(screen.getByText(/Plan from Week 0/))
+    await user.click(screen.getByRole('button', { name: 'Week Visibility' }))
     expect(screen.queryByRole('menu', { name: 'School actions' })).not.toBeInTheDocument()
   })
 

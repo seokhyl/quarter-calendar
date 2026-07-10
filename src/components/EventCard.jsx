@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DAY_OPTIONS } from '../constants/days.js'
+import { DAY_OPTIONS, getDayLabel } from '../constants/days.js'
 import EventTimeFields from './EventTimeFields.jsx'
 
 function formatRange(event) {
@@ -13,7 +13,7 @@ function formatRange(event) {
   return ''
 }
 
-function EventCard({ event, onUpdate, onDelete, onCopy }) {
+function EventCard({ event, eventDate, onUpdate, onDelete, onCopy }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draftEvent, setDraftEvent] = useState(event)
 
@@ -79,7 +79,8 @@ function EventCard({ event, onUpdate, onDelete, onCopy }) {
   return (
     <article className="event-card">
       <p className="event-card__time">
-        {event.day ? <span>{event.day}</span> : null}
+        {eventDate ? <span>{eventDate}</span> : null}
+        {event.day ? <span>{getDayLabel(event.day)}</span> : null}
         {formatRange(event) ? <span className="event-card__range">{formatRange(event)}</span> : null}
       </p>
       <h3>{event.title}</h3>

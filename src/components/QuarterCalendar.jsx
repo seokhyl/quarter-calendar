@@ -161,6 +161,7 @@ function QuarterCalendar({
               key={week.id}
               week={week}
               dateRange={getWeekDateRange(week.id, week1Monday)}
+              week1Monday={week1Monday}
               events={getSortedEvents(week.id)}
               onAddEvent={handleAddEvent}
               onUpdateEvent={handleUpdateEvent}

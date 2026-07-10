@@ -57,6 +57,18 @@ describe('QuarterCalendar', () => {
     expect(screen.getByText('5/11 - 5/17')).toBeInTheDocument()
   })
 
+  it('shows event metadata as date, day, then time when Week 1 Monday is set', () => {
+    renderCalendar()
+
+    const labPrepMetadata = screen.getByText('Lab prep').closest('article').querySelector('.event-card__time')
+
+    expect(Array.from(labPrepMetadata.children).map((child) => child.textContent)).toEqual([
+      '3/10',
+      '화',
+      '11:30 - 13:00',
+    ])
+  })
+
   it('adds, edits, deletes, copies, and pastes events', async () => {
     const user = userEvent.setup()
     renderCalendar()
