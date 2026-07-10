@@ -1,8 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  FOLDERS,
-  CALENDARS,
-  DEFAULT_ACTIVE_CALENDAR_ID,
   DEFAULT_VISIBLE_WEEK_IDS,
   DEFAULT_WEEK_1_MONDAY,
 } from './constants/calendars.js'
@@ -13,6 +10,7 @@ import {
   deleteFolder as deleteFolderOp,
   deleteCalendar as deleteCalendarOp,
 } from './lib/calendarState.js'
+import { loadAppState, saveAppState } from './lib/calendarPersistence.js'
 import QuarterCalendar from './components/QuarterCalendar.jsx'
 import Sidebar from './components/Sidebar.jsx'
 
@@ -21,22 +19,36 @@ function createId(prefix) {
 }
 
 function App() {
-  const [folders, setFolders] = useState(FOLDERS)
-  const [calendars, setCalendars] = useState(CALENDARS)
-  const [activeCalendarId, setActiveCalendarId] = useState(DEFAULT_ACTIVE_CALENDAR_ID)
+  const [appState, setAppState] = useState(loadAppState)
+  const { folders, calendars, activeCalendarId, eventsByWeek, nextEventId } = appState
   const activeCalendar = calendars.find((calendar) => calendar.id === activeCalendarId)
 
+  useEffect(() => {
+    saveAppState(appState)
+  }, [appState])
+
   function updateActiveCalendar(updates) {
-    setCalendars((currentCalendars) =>
-      currentCalendars.map((calendar) =>
-        calendar.id === activeCalendarId ? { ...calendar, ...updates } : calendar,
+    setAppState((currentState) => ({
+      ...currentState,
+      calendars: currentState.calendars.map((calendar) =>
+        calendar.id === currentState.activeCalendarId ? { ...calendar, ...updates } : calendar,
       ),
-    )
+    }))
+  }
+
+  function updateEventState(createNextEventState) {
+    setAppState((currentState) => ({
+      ...currentState,
+      ...createNextEventState({
+        eventsByWeek: currentState.eventsByWeek,
+        nextEventId: currentState.nextEventId,
+      }),
+    }))
   }
 
   function handleCreateFolder(name) {
     const folder = { id: createId('folder'), name: name.trim() || 'New Folder' }
-    setFolders((currentFolders) => [...currentFolders, folder])
+    setAppState((currentState) => ({ ...currentState, folders: [...currentState.folders, folder] }))
   }
 
   function handleCreateCalendar(name, folderId) {
@@ -50,34 +62,47 @@ function App() {
       visibleWeekIds: DEFAULT_VISIBLE_WEEK_IDS,
       week1Monday: DEFAULT_WEEK_1_MONDAY,
     }
-    setCalendars((currentCalendars) => [...currentCalendars, calendar])
+    setAppState((currentState) => ({ ...currentState, calendars: [...currentState.calendars, calendar] }))
+  }
+
+  function handleSelectCalendar(calendarId) {
+    setAppState((currentState) => ({ ...currentState, activeCalendarId: calendarId }))
   }
 
   function handleRenameFolder(folderId, name) {
-    setFolders((currentFolders) => renameFolderOp(currentFolders, folderId, name))
+    setAppState((currentState) => ({
+      ...currentState,
+      folders: renameFolderOp(currentState.folders, folderId, name),
+    }))
   }
 
   function handleRenameCalendar(calendarId, name) {
-    setCalendars((currentCalendars) => renameCalendarOp(currentCalendars, calendarId, name))
+    setAppState((currentState) => ({
+      ...currentState,
+      calendars: renameCalendarOp(currentState.calendars, calendarId, name),
+    }))
   }
 
   function handleMoveCalendar(calendarId, folderId) {
-    setCalendars((currentCalendars) => moveCalendarOp(currentCalendars, calendarId, folderId))
+    setAppState((currentState) => ({
+      ...currentState,
+      calendars: moveCalendarOp(currentState.calendars, calendarId, folderId),
+    }))
   }
 
   function handleDeleteFolder(folderId) {
-    const result = deleteFolderOp(folders, calendars, folderId)
-    setFolders(result.folders)
-    setCalendars(result.calendars)
+    setAppState((currentState) => ({
+      ...currentState,
+      ...deleteFolderOp(currentState.folders, currentState.calendars, folderId),
+    }))
   }
 
   function handleDeleteCalendar(calendarId) {
-    const result = deleteCalendarOp(calendars, calendarId, activeCalendarId)
-    setCalendars(result.calendars)
+    setAppState((currentState) => {
+      const result = deleteCalendarOp(currentState.calendars, calendarId, currentState.activeCalendarId)
 
-    if (result.nextActiveId !== activeCalendarId) {
-      setActiveCalendarId(result.nextActiveId)
-    }
+      return { ...currentState, calendars: result.calendars, activeCalendarId: result.nextActiveId }
+    })
   }
 
   return (
@@ -87,7 +112,7 @@ function App() {
           folders={folders}
           calendars={calendars}
           activeCalendarId={activeCalendarId}
-          onSelectCalendar={setActiveCalendarId}
+          onSelectCalendar={handleSelectCalendar}
           onCreateFolder={handleCreateFolder}
           onCreateCalendar={handleCreateCalendar}
           onRenameFolder={handleRenameFolder}
@@ -124,8 +149,10 @@ function App() {
             activeCalendarId={activeCalendarId}
             visibleWeekIds={activeCalendar?.visibleWeekIds ?? DEFAULT_VISIBLE_WEEK_IDS}
             week1Monday={activeCalendar?.week1Monday ?? DEFAULT_WEEK_1_MONDAY}
+            eventState={{ eventsByWeek, nextEventId }}
             onChangeVisibleWeekIds={(visibleWeekIds) => updateActiveCalendar({ visibleWeekIds })}
             onChangeWeek1Monday={(week1Monday) => updateActiveCalendar({ week1Monday })}
+            onChangeEventState={updateEventState}
           />
         </div>
       </div>

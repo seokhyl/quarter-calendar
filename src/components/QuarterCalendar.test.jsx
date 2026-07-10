@@ -1,20 +1,41 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { useState } from 'react'
+import { describe, expect, it } from 'vitest'
+import { DEFAULT_APP_STATE } from '../constants/appState.js'
 import { WEEKS } from '../constants/weeks.js'
 import QuarterCalendar from './QuarterCalendar.jsx'
 
 function renderCalendar(props = {}) {
-  return render(
-    <QuarterCalendar
-      activeCalendarId="cal-1"
-      visibleWeekIds={WEEKS.map((week) => week.id)}
-      week1Monday={{ month: '3', day: '2' }}
-      onChangeVisibleWeekIds={vi.fn()}
-      onChangeWeek1Monday={vi.fn()}
-      {...props}
-    />,
-  )
+  function TestCalendar() {
+    const [calendarState, setCalendarState] = useState({
+      visibleWeekIds: props.visibleWeekIds ?? WEEKS.map((week) => week.id),
+      week1Monday: props.week1Monday ?? { month: '3', day: '2' },
+    })
+    const [eventState, setEventState] = useState({
+      eventsByWeek: props.eventsByWeek ?? DEFAULT_APP_STATE.eventsByWeek,
+      nextEventId: props.nextEventId ?? DEFAULT_APP_STATE.nextEventId,
+    })
+
+    function handleChangeEventState(createNextEventState) {
+      setEventState((currentEventState) => ({ ...currentEventState, ...createNextEventState(currentEventState) }))
+    }
+
+    return (
+      <QuarterCalendar
+        activeCalendarId="cal-1"
+        visibleWeekIds={calendarState.visibleWeekIds}
+        week1Monday={calendarState.week1Monday}
+        eventState={eventState}
+        onChangeVisibleWeekIds={(visibleWeekIds) => setCalendarState((currentState) => ({ ...currentState, visibleWeekIds }))}
+        onChangeWeek1Monday={(week1Monday) => setCalendarState((currentState) => ({ ...currentState, week1Monday }))}
+        onChangeEventState={handleChangeEventState}
+        {...props}
+      />
+    )
+  }
+
+  return render(<TestCalendar />)
 }
 
 function getFormLabelOrder(form) {

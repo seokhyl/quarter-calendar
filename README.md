@@ -1,6 +1,6 @@
 # Quarter Calendar
 
-A small React + Vite calendar app for planning a quarter across weekly columns. It focuses on lightweight browser-session planning: multiple calendars, folders, editable calendar metadata, week visibility, date ranges, and event editing without server storage or local persistence.
+A small React + Vite calendar app for planning a quarter across weekly columns. It focuses on lightweight local planning: multiple calendars, folders, editable calendar metadata, week visibility, date ranges, event editing, and automatic browser-local persistence without server storage.
 
 ## Tech Stack
 
@@ -49,8 +49,10 @@ Run tests in watch mode:
 npm run test:watch
 ```
 
-The tests cover the main planning logic and user flows, including week date ranges, calendar/folder state changes, sidebar actions, week visibility, and event interactions.
+The tests cover the main planning logic and user flows, including week date ranges, calendar/folder state changes, sidebar actions, week visibility, event interactions, and localStorage save/restore.
 
 ## Notes
 
-This project intentionally keeps state in React only. Refreshing the page resets calendars, folders, week settings, and events to the initial in-memory data.
+This project automatically saves the app state to browser localStorage under a versioned key. Refreshing the page restores calendars, folders, week settings, active calendar selection, and events on the same browser/device.
+
+Persistence is isolated in `src/lib/calendarPersistence.js` so the current localStorage implementation can later be replaced by an API or database-backed repository without spreading storage calls through UI components.
