@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_APP_STATE } from '../constants/appState.js'
 import { WEEKS } from '../constants/weeks.js'
 import QuarterCalendar from './QuarterCalendar.jsx'
@@ -16,6 +16,7 @@ function renderCalendar(props = {}) {
       eventsByWeek: props.eventsByWeek ?? DEFAULT_APP_STATE.eventsByWeek,
       nextEventId: props.nextEventId ?? DEFAULT_APP_STATE.nextEventId,
     })
+    const [todayTimeZone, setTodayTimeZone] = useState(props.todayTimeZone ?? DEFAULT_APP_STATE.todayTimeZone)
 
     function handleChangeEventState(createNextEventState) {
       setEventState((currentEventState) => ({ ...currentEventState, ...createNextEventState(currentEventState) }))
@@ -24,9 +25,11 @@ function renderCalendar(props = {}) {
     return (
       <QuarterCalendar
         activeCalendarId="cal-1"
+        todayTimeZone={todayTimeZone}
         visibleWeekIds={calendarState.visibleWeekIds}
         week1Monday={calendarState.week1Monday}
         eventState={eventState}
+        onChangeTodayTimeZone={setTodayTimeZone}
         onChangeVisibleWeekIds={(visibleWeekIds) => setCalendarState((currentState) => ({ ...currentState, visibleWeekIds }))}
         onChangeWeek1Monday={(week1Monday) => setCalendarState((currentState) => ({ ...currentState, week1Monday }))}
         onChangeEventState={handleChangeEventState}
@@ -49,6 +52,10 @@ function getFormLabelOrder(form) {
 }
 
 describe('QuarterCalendar', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('renders computed date ranges from Week 1 Monday', () => {
     renderCalendar()
 
@@ -67,6 +74,18 @@ describe('QuarterCalendar', () => {
       '화',
       '11:30 - 13:00',
     ])
+  })
+
+  it('shows today in the selected timezone above the Week 1 Monday picker', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-07-01T06:00:00.000Z'))
+    renderCalendar()
+
+    expect(screen.getByText('TODAY: 2026/7/1 (수)')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText('Today timezone'), { target: { value: 'PST' } })
+
+    expect(screen.getByText('TODAY: 2026/6/30 (화)')).toBeInTheDocument()
   })
 
   it('adds, edits, deletes, copies, and pastes events', async () => {

@@ -20,7 +20,7 @@ function createId(prefix) {
 
 function App() {
   const [appState, setAppState] = useState(loadAppState)
-  const { folders, calendars, activeCalendarId, eventsByWeek, nextEventId } = appState
+  const { folders, calendars, activeCalendarId, todayTimeZone, eventsByWeek, nextEventId } = appState
   const activeCalendar = calendars.find((calendar) => calendar.id === activeCalendarId)
 
   useEffect(() => {
@@ -145,9 +145,11 @@ function App() {
 
           <QuarterCalendar
             activeCalendarId={activeCalendarId}
+            todayTimeZone={todayTimeZone}
             visibleWeekIds={activeCalendar?.visibleWeekIds ?? DEFAULT_VISIBLE_WEEK_IDS}
             week1Monday={activeCalendar?.week1Monday ?? DEFAULT_WEEK_1_MONDAY}
             eventState={{ eventsByWeek, nextEventId }}
+            onChangeTodayTimeZone={(todayTimeZone) => setAppState((currentState) => ({ ...currentState, todayTimeZone }))}
             onChangeVisibleWeekIds={(visibleWeekIds) => updateActiveCalendar({ visibleWeekIds })}
             onChangeWeek1Monday={(week1Monday) => updateActiveCalendar({ week1Monday })}
             onChangeEventState={updateEventState}

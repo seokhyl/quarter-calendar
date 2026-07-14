@@ -471,12 +471,19 @@ h1 {
 }
 
 .calendar-meta {
+  align-items: flex-start;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 12px;
 }
 
+.calendar-date-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.today-date-picker,
 .week-date-picker {
   align-items: center;
   display: flex;
@@ -484,6 +491,7 @@ h1 {
   gap: 8px;
 }
 
+.today-date-picker select,
 .week-date-picker select {
   background: var(--color-surface-strong);
   border: 1px solid var(--color-border-strong);
@@ -497,11 +505,16 @@ h1 {
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
+.today-date-picker select {
+  min-width: 78px;
+}
+
 .week-date-picker select:disabled {
   cursor: not-allowed;
   opacity: 0.48;
 }
 
+.today-date-picker select:focus-visible,
 .week-date-picker select:focus-visible {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.16);

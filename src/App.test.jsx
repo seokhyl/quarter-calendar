@@ -87,6 +87,7 @@ describe('App feature flows', () => {
 
     await user.clear(screen.getByLabelText('Title'))
     await user.type(screen.getByLabelText('Title'), 'Persisted Quarter')
+    fireEvent.change(screen.getByLabelText('Today timezone'), { target: { value: 'PST' } })
     await user.click(screen.getByLabelText('Add event to Week 2'))
     await user.type(screen.getByPlaceholderText('New event'), 'Saved checkpoint')
     await user.click(screen.getByRole('button', { name: 'Add' }))
@@ -95,6 +96,7 @@ describe('App feature flows', () => {
     render(<App />)
 
     expect(screen.getByLabelText('Title')).toHaveValue('Persisted Quarter')
+    expect(screen.getByLabelText('Today timezone')).toHaveValue('PST')
     expect(screen.getByText('Saved checkpoint')).toBeInTheDocument()
   })
 })

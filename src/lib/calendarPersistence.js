@@ -33,7 +33,7 @@ export function loadAppState() {
   try {
     const parsedValue = JSON.parse(savedValue)
 
-    return isSavedPayload(parsedValue) ? parsedValue.state : DEFAULT_APP_STATE
+    return isSavedPayload(parsedValue) ? { ...DEFAULT_APP_STATE, ...parsedValue.state } : DEFAULT_APP_STATE
   } catch (error) {
     if (error instanceof SyntaxError) {
       return DEFAULT_APP_STATE

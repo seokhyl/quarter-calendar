@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { WEEKS } from '../constants/weeks.js'
 import { DAY_ORDER } from '../constants/days.js'
 import { getWeekDateRange } from '../lib/calendarDates.js'
+import { TODAY_TIME_ZONE_OPTIONS, formatTodayLabel } from '../lib/todayDate.js'
 import WeekColumn from './WeekColumn.jsx'
 import WeekVisibilityPanel from './WeekVisibilityPanel.jsx'
 
@@ -22,9 +23,11 @@ const MONTH_OPTIONS = [
 
 function QuarterCalendar({
   activeCalendarId,
+  todayTimeZone,
   visibleWeekIds,
   week1Monday,
   eventState,
+  onChangeTodayTimeZone,
   onChangeVisibleWeekIds,
   onChangeWeek1Monday,
   onChangeEventState,
@@ -120,33 +123,50 @@ function QuarterCalendar({
   return (
     <section className="calendar-section" aria-label="Quarter calendar">
       <div className="calendar-meta">
-        <div className="week-date-picker" aria-label="Set Week 1 Monday date">
-          <span>Week 1 Monday</span>
-          <select
-            aria-label="Week 1 Monday month"
-            value={week1Monday.month}
-            onChange={(event) => handleWeek1MonthChange(event.target.value)}
-          >
-            <option value="">Month</option>
-            {MONTH_OPTIONS.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
-            ))}
-          </select>
-          <select
-            aria-label="Week 1 Monday day"
-            disabled={!selectedMonth}
-            value={week1Monday.day}
-            onChange={(event) => onChangeWeek1Monday({ ...week1Monday, day: event.target.value })}
-          >
-            <option value="">Day</option>
-            {dayOptions.map((day) => (
-              <option key={day} value={day}>
-                {day}
-              </option>
-            ))}
-          </select>
+        <div className="calendar-date-controls">
+          <div className="today-date-picker" aria-label="Set today timezone">
+            <select
+              aria-label="Today timezone"
+              value={todayTimeZone}
+              onChange={(event) => onChangeTodayTimeZone(event.target.value)}
+            >
+              {TODAY_TIME_ZONE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span>TODAY: {formatTodayLabel(new Date(), todayTimeZone)}</span>
+          </div>
+
+          <div className="week-date-picker" aria-label="Set Week 1 Monday date">
+            <span>Week 1 Monday</span>
+            <select
+              aria-label="Week 1 Monday month"
+              value={week1Monday.month}
+              onChange={(event) => handleWeek1MonthChange(event.target.value)}
+            >
+              <option value="">Month</option>
+              {MONTH_OPTIONS.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            <select
+              aria-label="Week 1 Monday day"
+              disabled={!selectedMonth}
+              value={week1Monday.day}
+              onChange={(event) => onChangeWeek1Monday({ ...week1Monday, day: event.target.value })}
+            >
+              <option value="">Day</option>
+              {dayOptions.map((day) => (
+                <option key={day} value={day}>
+                  {day}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <span>Scroll horizontally to explore the quarter</span>
         <button className="visibility-button" type="button" onClick={() => setVisibilityOpen(true)}>

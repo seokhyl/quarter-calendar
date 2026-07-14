@@ -15,6 +15,7 @@ describe('calendar persistence', () => {
     const savedState = {
       ...DEFAULT_APP_STATE,
       activeCalendarId: 'cal-2',
+      todayTimeZone: 'PST',
       calendars: DEFAULT_APP_STATE.calendars.map((calendar) =>
         calendar.id === 'cal-2' ? { ...calendar, title: 'Saved Assignments' } : calendar,
       ),
@@ -38,7 +39,7 @@ describe('calendar persistence', () => {
   })
 
   it('saves the app state as a versioned payload', () => {
-    const nextState = { ...DEFAULT_APP_STATE, activeCalendarId: 'cal-3' }
+    const nextState = { ...DEFAULT_APP_STATE, activeCalendarId: 'cal-3', todayTimeZone: 'PST' }
 
     saveAppState(nextState)
 

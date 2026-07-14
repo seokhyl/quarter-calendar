@@ -30,6 +30,7 @@ export const DEFAULT_APP_STATE = {
   folders: FOLDERS,
   calendars: CALENDARS,
   activeCalendarId: DEFAULT_ACTIVE_CALENDAR_ID,
+  todayTimeZone: 'KST',
   eventsByWeek: INITIAL_EVENTS,
   nextEventId: DEFAULT_NEXT_EVENT_ID,
 }
