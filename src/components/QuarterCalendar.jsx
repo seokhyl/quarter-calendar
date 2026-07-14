@@ -168,7 +168,6 @@ function QuarterCalendar({
             </select>
           </div>
         </div>
-        <span>Scroll horizontally to explore the quarter</span>
         <button className="visibility-button" type="button" onClick={() => setVisibilityOpen(true)}>
           Week Visibility
         </button>
