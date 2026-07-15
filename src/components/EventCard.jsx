@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { DAY_OPTIONS, getDayLabel } from '../constants/days.js'
+import { DEFAULT_EVENT_COLOR } from '../constants/eventColors.js'
+import EventColorPicker from './EventColorPicker.jsx'
 import EventTimeFields from './EventTimeFields.jsx'
 
 function formatRange(event) {
@@ -16,6 +18,7 @@ function formatRange(event) {
 function EventCard({ event, eventDate, onUpdate, onDelete, onCopy }) {
   const [isEditing, setIsEditing] = useState(false)
   const [draftEvent, setDraftEvent] = useState(event)
+  const eventColor = event.color || DEFAULT_EVENT_COLOR
 
   function handleDraftChange(field, value) {
     setDraftEvent((currentDraft) => ({ ...currentDraft, [field]: value }))
@@ -64,6 +67,10 @@ function EventCard({ event, eventDate, onUpdate, onDelete, onCopy }) {
         </label>
 
         <EventTimeFields value={draftEvent} onChange={handleDraftChange} />
+        <EventColorPicker
+          value={draftEvent.color || DEFAULT_EVENT_COLOR}
+          onChange={(color) => handleDraftChange('color', color)}
+        />
         <div className="form-actions">
           <button className="text-button" type="button" onClick={handleCancel}>
             Cancel
@@ -77,7 +84,7 @@ function EventCard({ event, eventDate, onUpdate, onDelete, onCopy }) {
   }
 
   return (
-    <article className="event-card">
+    <article className="event-card" style={eventColor ? { backgroundColor: eventColor } : undefined}>
       <p className="event-card__time">
         {eventDate ? <span>{eventDate}</span> : null}
         {event.day ? <span>{getDayLabel(event.day)}</span> : null}

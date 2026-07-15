@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { DAY_OPTIONS } from '../constants/days.js'
+import { DEFAULT_EVENT_COLOR } from '../constants/eventColors.js'
 import { getEventDate } from '../lib/calendarDates.js'
 import EventCard from './EventCard.jsx'
+import EventColorPicker from './EventColorPicker.jsx'
 import EventTimeFields from './EventTimeFields.jsx'
 
 const EMPTY_EVENT = {
@@ -12,9 +14,21 @@ const EMPTY_EVENT = {
   endMinute: '',
   title: '',
   note: '',
+  color: DEFAULT_EVENT_COLOR,
 }
 
-function WeekColumn({ week, dateRange, week1Monday, events, onAddEvent, onUpdateEvent, onDeleteEvent, onCopyEvent, onPasteEvent, canPasteEvent }) {
+function WeekColumn({
+  week,
+  dateRange,
+  week1Monday,
+  events,
+  onAddEvent,
+  onUpdateEvent,
+  onDeleteEvent,
+  onCopyEvent,
+  onPasteEvent,
+  canPasteEvent,
+}) {
   const isFinals = week.id === 'finals'
   const [isAdding, setIsAdding] = useState(false)
   const [draftEvent, setDraftEvent] = useState(EMPTY_EVENT)
@@ -36,9 +50,10 @@ function WeekColumn({ week, dateRange, week1Monday, events, onAddEvent, onUpdate
       startMinute: draftEvent.startMinute,
       endHour: draftEvent.endHour,
       endMinute: draftEvent.endMinute,
-      title: draftEvent.title.trim(),
-      note: draftEvent.note.trim(),
-    })
+        title: draftEvent.title.trim(),
+        note: draftEvent.note.trim(),
+        color: draftEvent.color,
+      })
     setDraftEvent(EMPTY_EVENT)
     setIsAdding(false)
   }
@@ -102,6 +117,10 @@ function WeekColumn({ week, dateRange, week1Monday, events, onAddEvent, onUpdate
           </label>
 
           <EventTimeFields value={draftEvent} onChange={handleDraftChange} />
+          <EventColorPicker
+            value={draftEvent.color}
+            onChange={(color) => handleDraftChange('color', color)}
+          />
           <div className="form-actions">
             <button className="text-button" type="button" onClick={() => setIsAdding(false)}>
               Cancel

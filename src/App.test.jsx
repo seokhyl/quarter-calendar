@@ -89,7 +89,9 @@ describe('App feature flows', () => {
     await user.type(screen.getByLabelText('Title'), 'Persisted Quarter')
     fireEvent.change(screen.getByLabelText('Today timezone'), { target: { value: 'PST' } })
     await user.click(screen.getByLabelText('Add event to Week 2'))
+    const addForm = screen.getByPlaceholderText('New event').closest('form')
     await user.type(screen.getByPlaceholderText('New event'), 'Saved checkpoint')
+    await user.click(within(addForm).getByRole('button', { name: 'Choose Green event color' }))
     await user.click(screen.getByRole('button', { name: 'Add' }))
 
     unmount()
@@ -98,5 +100,7 @@ describe('App feature flows', () => {
     expect(screen.getByLabelText('Title')).toHaveValue('Persisted Quarter')
     expect(screen.getByLabelText('Today timezone')).toHaveValue('PST')
     expect(screen.getByText('Saved checkpoint')).toBeInTheDocument()
+    expect(screen.getByText('Saved checkpoint').closest('article')).toHaveStyle({ backgroundColor: '#dcfce7' })
+    expect(JSON.parse(localStorage.getItem('quarter-calendar:v1')).state.eventsByWeek['week-2'].at(-1).color).toBe('#dcfce7')
   })
 })

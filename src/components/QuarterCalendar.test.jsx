@@ -42,7 +42,7 @@ function renderCalendar(props = {}) {
 }
 
 function getFormLabelOrder(form) {
-  return Array.from(form.querySelectorAll('label, .time-field__label')).map((field) => {
+  return Array.from(form.querySelectorAll('label, .time-field__label, .event-color-picker__label')).map((field) => {
     if (field.matches('label')) {
       return field.childNodes[0].textContent.trim()
     }
@@ -94,18 +94,30 @@ describe('QuarterCalendar', () => {
 
     await user.click(screen.getByLabelText('Add event to Week 2'))
     const addForm = screen.getByPlaceholderText('New event').closest('form')
-    expect(getFormLabelOrder(addForm)).toEqual(['Title', 'Note', 'Day', 'Start', 'End'])
+    expect(getFormLabelOrder(addForm)).toEqual(['Title', 'Note', 'Day', 'Start', 'End', 'Color'])
 
     await user.type(screen.getByPlaceholderText('New event'), 'New checkpoint')
     await user.click(screen.getByRole('button', { name: 'Add' }))
     expect(screen.getByText('New checkpoint')).toBeInTheDocument()
+    expect(screen.getByText('New checkpoint').closest('article').style.backgroundColor).toBe('')
+
+    fireEvent.click(screen.getByText('New checkpoint').closest('article').querySelector('button.danger-button'))
+    expect(screen.queryByText('New checkpoint')).not.toBeInTheDocument()
+
+    await user.click(screen.getByLabelText('Add event to Week 2'))
+    const coloredAddForm = screen.getByPlaceholderText('New event').closest('form')
+    await user.type(screen.getByPlaceholderText('New event'), 'New checkpoint')
+    await user.click(within(coloredAddForm).getByRole('button', { name: 'Choose Green event color' }))
+    await user.click(screen.getByRole('button', { name: 'Add' }))
+    expect(screen.getByText('New checkpoint')).toBeInTheDocument()
+    expect(screen.getByText('New checkpoint').closest('article')).toHaveStyle({ backgroundColor: '#dcfce7' })
 
     fireEvent.click(screen.getByText('New checkpoint').closest('article').querySelector('button.danger-button'))
     expect(screen.queryByText('New checkpoint')).not.toBeInTheDocument()
 
     await user.click(screen.getByText('Lab prep').closest('article').querySelector('button.text-button:nth-of-type(2)'))
     const editForm = screen.getByDisplayValue('Lab prep').closest('form')
-    expect(getFormLabelOrder(editForm)).toEqual(['Title', 'Note', 'Day', 'Start', 'End'])
+    expect(getFormLabelOrder(editForm)).toEqual(['Title', 'Note', 'Day', 'Start', 'End', 'Color'])
 
     const editTitle = screen.getByDisplayValue('Lab prep')
     await user.clear(editTitle)
@@ -119,5 +131,32 @@ describe('QuarterCalendar', () => {
     const week2Column = screen.getByRole('heading', { name: 'Week 2' }).closest('article')
     await user.click(within(week2Column).getByRole('button', { name: 'Paste' }))
     expect(within(week2Column).getByText('Course kickoff')).toBeInTheDocument()
+  })
+
+  it('records custom event colors so they remain selectable', async () => {
+    const user = userEvent.setup()
+    renderCalendar()
+
+    await user.click(screen.getByLabelText('Add event to Week 2'))
+    const addForm = screen.getByPlaceholderText('New event').closest('form')
+
+    expect(within(addForm).getAllByRole('button', { name: /event color/ })).toHaveLength(8)
+    expect(within(addForm).getByRole('button', { name: 'Choose Default event color' })).toBeInTheDocument()
+    expect(within(addForm).queryByLabelText('Custom event color')).not.toBeInTheDocument()
+  })
+
+  it('uses the default swatch to clear a selected event color', async () => {
+    const user = userEvent.setup()
+    renderCalendar()
+
+    await user.click(screen.getByLabelText('Add event to Week 2'))
+    const addForm = screen.getByPlaceholderText('New event').closest('form')
+
+    await user.click(within(addForm).getByRole('button', { name: 'Choose Green event color' }))
+    await user.click(within(addForm).getByRole('button', { name: 'Choose Default event color' }))
+    await user.type(screen.getByPlaceholderText('New event'), 'Default swatch check')
+    await user.click(screen.getByRole('button', { name: 'Add' }))
+
+    expect(screen.getByText('Default swatch check').closest('article').style.backgroundColor).toBe('')
   })
 })

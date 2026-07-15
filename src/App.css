@@ -762,7 +762,8 @@ h1 {
 }
 
 .event-form label,
-.event-card--editing label {
+.event-card--editing label,
+.event-color-picker__label {
   color: var(--color-muted);
   display: grid;
   font-size: 0.78rem;
@@ -770,6 +771,45 @@ h1 {
   gap: 6px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.event-color-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.event-color-picker__swatches {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+}
+
+.event-color-swatch {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  height: 28px;
+  min-width: 0;
+  padding: 0;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  width: 100%;
+}
+
+.event-color-swatch:hover,
+.event-color-swatch:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(45, 108, 223, 0.14);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.event-color-swatch[aria-pressed='true'] {
+  border-color: var(--color-accent-strong);
+  box-shadow: inset 0 0 0 2px var(--color-surface-strong), 0 0 0 2px rgba(45, 108, 223, 0.24);
+}
+
+.event-color-swatch--default {
+  background: var(--color-surface-strong);
 }
 
 .event-form input,

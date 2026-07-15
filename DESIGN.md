@@ -9,6 +9,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Background: `--color-page`, `--color-surface`, `--color-surface-strong`
 - Text: `--color-text`, `--color-muted`, `--color-soft`
 - Accent: `--color-accent`, `--color-accent-strong`, `--color-danger`, `--color-danger-soft`, `--color-finals`, `--color-finals-border`
+- Event colors: the default event-card surface plus seven soft rainbow preset backgrounds.
 - Border: `--color-border`, `--color-border-strong`
 - Shadow: `--shadow-card`, `--shadow-column`
 - Radius: `--radius-card`, `--radius-column`, `--radius-pill`
@@ -43,6 +44,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Week column: title row, add button, inline add form ordered Title, Note, Day, Start, End, and stacked event cards.
 - Week date range: optional Monday-Sunday date text appears directly below each week title once Week 1 Monday is selected.
 - Event card: small block with metadata ordered date, Korean day label, and HH:MM - HH:MM time range, title, optional note, copy/edit controls, delete control, and an edit form matching the add form order.
+- Event color picker: add/edit forms end with a compact Color control containing eight fixed swatches: Default, Red, Orange, Yellow, Green, Blue, Indigo, and Violet.
 - Event clipboard: Copy stores event contents in memory; Paste in a week column creates a new event for the active calendar with a fresh id.
 - Persistence boundary: durable app state is saved and restored through `calendarPersistence`, keeping localStorage out of UI components so a later database-backed repository can replace it.
 - Finals column: same structure as a week column with warmer tint and stronger border.
@@ -59,6 +61,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 - Today timezone selection changes the displayed TODAY label and is saved in durable browser-local app state.
 - Week 1 Monday month/day selection is stored per calendar and computes visible date ranges in browser-local state.
 - Event card dates appear in M/D format when Week 1 Monday and an event day are selected.
+- Event background colors are saved on each event when one of the seven color presets is selected; Default clears the event color so the original event-card surface background is used.
 - Durable state changes auto-save to localStorage and restore on the next page load in the same browser.
 
 ## 7. Constraints
