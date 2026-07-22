@@ -81,11 +81,11 @@ describe('QuarterCalendar', () => {
     vi.setSystemTime(new Date('2026-07-01T06:00:00.000Z'))
     renderCalendar()
 
-    expect(screen.getByText('TODAY: 2026/7/1 (수)')).toBeInTheDocument()
-
-    fireEvent.change(screen.getByLabelText('Today timezone'), { target: { value: 'PST' } })
-
     expect(screen.getByText('TODAY: 2026/6/30 (화)')).toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText('Today timezone'), { target: { value: 'KST' } })
+
+    expect(screen.getByText('TODAY: 2026/7/1 (수)')).toBeInTheDocument()
   })
 
   it('adds, edits, deletes, copies, and pastes events', async () => {

@@ -15,28 +15,58 @@ function openFolderMenu(name) {
   fireEvent.click(screen.getByLabelText(`Open folder actions for ${name}`))
 }
 
+async function createFolder(user, name) {
+  await user.click(screen.getByRole('button', { name: 'New folder' }))
+  await user.type(screen.getByLabelText('New folder name'), name)
+  await user.click(screen.getByRole('button', { name: 'Add' }))
+}
+
+async function createCalendar(user, name, folderName = '') {
+  await user.click(screen.getByRole('button', { name: 'New calendar' }))
+  await user.type(screen.getByLabelText('New calendar name'), name)
+  if (folderName) {
+    const folderOption = screen.getByRole('option', { name: folderName })
+    fireEvent.change(screen.getByLabelText('New calendar folder'), { target: { value: folderOption.value } })
+  }
+  await user.click(screen.getByRole('button', { name: 'Add' }))
+}
+
 describe('App feature flows', () => {
+  it('starts with an unfiled Schedule calendar and hides Week 0', () => {
+    render(<App />)
+
+    expect(screen.getByRole('button', { name: 'Schedule' })).toBeInTheDocument()
+    expect(screen.queryByText('School')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Week 0' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Week 1' })).toBeInTheDocument()
+  })
+
   it('closes an open sidebar action menu when clicking outside it', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    openFolderMenu('School')
-    expect(screen.getByRole('menu', { name: 'School actions' })).toBeInTheDocument()
+    openCalendarMenu('Schedule')
+    expect(screen.getByRole('menu', { name: 'Schedule actions' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Week Visibility' }))
-    expect(screen.queryByRole('menu', { name: 'School actions' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('menu', { name: 'Schedule actions' })).not.toBeInTheDocument()
   })
 
   it('renames folders/calendars, moves calendars, deletes calendars, and toggles week visibility', async () => {
     const user = userEvent.setup()
     render(<App />)
 
+    await createFolder(user, 'School')
+    await createFolder(user, 'Personal')
+    await createCalendar(user, 'Classes', 'School')
+    await createCalendar(user, 'Standalone')
+
     openFolderMenu('School')
     await user.click(screen.getByRole('menuitem', { name: 'Rename' }))
     await user.clear(screen.getByLabelText('Folder name'))
     await user.type(screen.getByLabelText('Folder name'), 'Academics')
     await user.click(screen.getByRole('button', { name: 'Save' }))
-    expect(screen.getByRole('button', { name: /Academics 2/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Academics 1/ })).toBeInTheDocument()
 
     openCalendarMenu('Classes')
     await user.click(screen.getByRole('menuitem', { name: 'Rename' }))
@@ -46,9 +76,10 @@ describe('App feature flows', () => {
     expect(screen.getByRole('button', { name: 'Courses' })).toBeInTheDocument()
 
     openCalendarMenu('Courses')
-    fireEvent.change(screen.getByLabelText('Folder'), { target: { value: 'folder-2' } })
-    expect(screen.getByRole('button', { name: /Academics 1/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Personal 2/ })).toBeInTheDocument()
+    const personalOption = screen.getByRole('option', { name: 'Personal' })
+    fireEvent.change(screen.getByLabelText('Folder'), { target: { value: personalOption.value } })
+    expect(screen.getByRole('button', { name: /Academics 0/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Personal 1/ })).toBeInTheDocument()
 
     openCalendarMenu('Standalone')
     await user.click(screen.getByRole('menuitem', { name: 'Delete' }))
@@ -57,7 +88,7 @@ describe('App feature flows', () => {
     await user.click(screen.getByRole('button', { name: 'Week Visibility' }))
     const dialog = screen.getByRole('dialog', { name: 'Week visibility settings' })
     fireEvent.click(within(dialog).getByLabelText('Week 0'))
-    expect(screen.queryByRole('heading', { name: 'Week 0' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Week 0' })).toBeInTheDocument()
   })
 
   it('keeps Week 1 Monday dates separate for each calendar', async () => {
@@ -68,6 +99,7 @@ describe('App feature flows', () => {
     fireEvent.change(screen.getByLabelText('Week 1 Monday day'), { target: { value: '2' } })
     expect(screen.getByText('3/2 - 3/8')).toBeInTheDocument()
 
+    await createCalendar(user, 'Assignments')
     await user.click(screen.getByRole('button', { name: 'Assignments' }))
     expect(screen.getByLabelText('Week 1 Monday month')).toHaveValue('')
     expect(screen.queryByText('3/2 - 3/8')).not.toBeInTheDocument()
@@ -76,7 +108,7 @@ describe('App feature flows', () => {
     fireEvent.change(screen.getByLabelText('Week 1 Monday day'), { target: { value: '6' } })
     expect(screen.getByText('4/6 - 4/12')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Classes' }))
+    await user.click(screen.getByRole('button', { name: 'Schedule' }))
     expect(screen.getByLabelText('Week 1 Monday month')).toHaveValue('3')
     expect(screen.getByText('3/2 - 3/8')).toBeInTheDocument()
   })
