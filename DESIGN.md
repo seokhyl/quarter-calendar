@@ -38,7 +38,7 @@ Quarter Calendar is a calm desktop planning surface: editable editorial header, 
 ## 5. Components
 
 - App header: editable title and subtitle fields with a compact spacer below the heading area instead of helper copy.
-- Sidebar: folders, calendars (with optional folderId), unfiled calendars, active calendar selection, create buttons, and overflow menus for rename, move, and delete actions.
+- Sidebar: folders, calendars (with optional folderId), unfiled calendars, active calendar selection, a New calendar button that immediately creates and selects an unfiled blank calendar, and overflow menus for rename, move, and delete actions.
 - Week visibility: header button opens a modal popup listing all weeks with checkboxes and a visible-count summary.
 - Today date controls: compact KST/PST selector and uppercase today metadata label using the same small label treatment as the Week 1 Monday picker.
 - Week column: title row, add button, inline add form ordered Title, Note, Day, Start, End, and stacked event cards.

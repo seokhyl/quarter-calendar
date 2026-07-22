@@ -23,12 +23,17 @@ async function createFolder(user, name) {
 
 async function createCalendar(user, name, folderName = '') {
   await user.click(screen.getByRole('button', { name: 'New calendar' }))
-  await user.type(screen.getByLabelText('New calendar name'), name)
+  openCalendarMenu('New Calendar')
+  await user.click(screen.getByRole('menuitem', { name: 'Rename' }))
+  await user.clear(screen.getByLabelText('Calendar name'))
+  await user.type(screen.getByLabelText('Calendar name'), name)
+  await user.click(screen.getByRole('button', { name: 'Save' }))
+
   if (folderName) {
+    openCalendarMenu(name)
     const folderOption = screen.getByRole('option', { name: folderName })
-    fireEvent.change(screen.getByLabelText('New calendar folder'), { target: { value: folderOption.value } })
+    fireEvent.change(screen.getByLabelText('Folder'), { target: { value: folderOption.value } })
   }
-  await user.click(screen.getByRole('button', { name: 'Add' }))
 }
 
 describe('App feature flows', () => {
@@ -39,6 +44,18 @@ describe('App feature flows', () => {
     expect(screen.queryByText('School')).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Week 0' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Week 1' })).toBeInTheDocument()
+  })
+
+  it('creates and selects an unfiled blank calendar immediately', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'New calendar' }))
+
+    expect(screen.getByRole('button', { name: 'New Calendar' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Title')).toHaveValue('New Calendar')
+    expect(screen.queryByLabelText('New calendar name')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('New calendar folder')).not.toBeInTheDocument()
   })
 
   it('closes an open sidebar action menu when clicking outside it', async () => {

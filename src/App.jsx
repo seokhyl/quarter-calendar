@@ -51,18 +51,20 @@ function App() {
     setAppState((currentState) => ({ ...currentState, folders: [...currentState.folders, folder] }))
   }
 
-  function handleCreateCalendar(name, folderId) {
-    const trimmedName = name.trim() || 'New Calendar'
+  function handleCreateCalendar() {
     const calendar = {
       id: createId('cal'),
-      name: trimmedName,
-      folderId: folderId || undefined,
-      title: trimmedName,
+      name: 'New Calendar',
+      title: 'New Calendar',
       subtitle: '',
       visibleWeekIds: DEFAULT_VISIBLE_WEEK_IDS,
       week1Monday: DEFAULT_WEEK_1_MONDAY,
     }
-    setAppState((currentState) => ({ ...currentState, calendars: [...currentState.calendars, calendar] }))
+    setAppState((currentState) => ({
+      ...currentState,
+      calendars: [...currentState.calendars, calendar],
+      activeCalendarId: calendar.id,
+    }))
   }
 
   function handleSelectCalendar(calendarId) {

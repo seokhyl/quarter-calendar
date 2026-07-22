@@ -16,9 +16,6 @@ function Sidebar({
 }) {
   const [isAddingFolder, setIsAddingFolder] = useState(false)
   const [folderName, setFolderName] = useState('')
-  const [isAddingCalendar, setIsAddingCalendar] = useState(false)
-  const [calendarName, setCalendarName] = useState('')
-  const [calendarFolderId, setCalendarFolderId] = useState('')
   const [collapsedFolderIds, setCollapsedFolderIds] = useState([])
   const [openMenu, setOpenMenu] = useState(null)
 
@@ -50,13 +47,6 @@ function Sidebar({
     onCreateFolder(folderName)
     setFolderName('')
     setIsAddingFolder(false)
-  }
-
-  function submitCalendar() {
-    onCreateCalendar(calendarName, calendarFolderId || undefined)
-    setCalendarName('')
-    setCalendarFolderId('')
-    setIsAddingCalendar(false)
   }
 
   function toggleFolder(folderId) {
@@ -129,7 +119,7 @@ function Sidebar({
         <button className="sidebar-button" type="button" onClick={() => setIsAddingFolder((value) => !value)}>
           New folder
         </button>
-        <button className="sidebar-button" type="button" onClick={() => setIsAddingCalendar((value) => !value)}>
+        <button className="sidebar-button" type="button" onClick={onCreateCalendar}>
           New calendar
         </button>
       </div>
@@ -147,37 +137,6 @@ function Sidebar({
               Cancel
             </button>
             <button className="primary-button" type="button" onClick={submitFolder}>
-              Add
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-      {isAddingCalendar ? (
-        <div className="sidebar-create">
-          <input
-            value={calendarName}
-            onChange={(event) => setCalendarName(event.target.value)}
-            placeholder="Calendar name"
-            aria-label="New calendar name"
-          />
-          <select
-            value={calendarFolderId}
-            onChange={(event) => setCalendarFolderId(event.target.value)}
-            aria-label="New calendar folder"
-          >
-            <option value="">No folder</option>
-            {folders.map((folder) => (
-              <option key={folder.id} value={folder.id}>
-                {folder.name}
-              </option>
-            ))}
-          </select>
-          <div className="form-actions">
-            <button className="text-button" type="button" onClick={() => setIsAddingCalendar(false)}>
-              Cancel
-            </button>
-            <button className="primary-button" type="button" onClick={submitCalendar}>
               Add
             </button>
           </div>
